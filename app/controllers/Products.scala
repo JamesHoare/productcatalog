@@ -14,4 +14,15 @@ object Products extends Controller {
 
     Ok(views.html.products.list(products))
   }
+
+
+
+  def details(ean: Long) = Action { implicit request =>
+
+    Product.findByEan(ean).map { product =>
+      Ok(views.html.products.details(product))
+    }.getOrElse(NotFound)
+
+  }
+
 }

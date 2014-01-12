@@ -5,6 +5,7 @@
 GET        /                                 controllers.MessageController.index()
 GET        /message                          controllers.MessageController.getMessage()
 GET        /products                         controllers.Products.list
+GET        /products/:ean                    controllers.Products.details(ean: Long)
 GET        /assets/javascripts/routes        controllers.MessageController.javascriptRoutes()
 
 # Map static resources from the /public folder to the /assets URL path

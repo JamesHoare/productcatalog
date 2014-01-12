@@ -10,6 +10,10 @@ object MessageController extends Controller {
 
   implicit val fooWrites = Json.writes[Message]
 
+  def index = Action {
+    Redirect(routes.Products.list())
+  }
+
   def getMessage = Action {
     Ok(Json.toJson(Message("Hello Jess from  Scala")))
   }

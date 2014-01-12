@@ -1,8 +1,16 @@
 package models
 
+import play.api.libs.json._
+import play.api.libs.json.JsObject
+import play.api.libs.json.JsNumber
+
 
 case class Product(
                     ean: Long, name: String, description: String)
+
+
+
+
 
 object Product {
 
@@ -23,4 +31,17 @@ object Product {
   def findAll = products.toList.sortBy(_.ean)
 
   def findByEan(ean: Long) = products.find(_.ean == ean)
+
+
+  implicit val productWrites = new Writes[Product] {
+    def writes(p: Product): JsValue = {
+      Json.obj(
+        "ean" -> p.ean,
+        "name" -> p.name,
+        "description" -> p.description
+      )
+    }
+  }
+
+
 }

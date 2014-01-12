@@ -6,8 +6,8 @@ import models.Product
 import play.api.data.Form
 import play.api.data.Forms.{mapping, longNumber, nonEmptyText}
 import play.api.i18n.Messages
-import play.api.libs.json.Json
-
+import play.api.libs.json._
+import play.api.libs.functional._
 
 
 object Products extends Controller {
@@ -27,6 +27,11 @@ object Products extends Controller {
       Ok(views.html.products.details(product))
     }.getOrElse(NotFound)
 
+  }
+
+
+  def search(id: Long) = Action {  implicit request =>
+    Ok(Json.prettyPrint(Json.toJson(Product.findByEan(id))))
   }
 
 

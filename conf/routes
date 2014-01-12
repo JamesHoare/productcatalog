@@ -3,6 +3,7 @@
 # ~~~~
 
 GET        /                                 controllers.MessageController.index()
+GET        /product/:id                      controllers.Products.search(id: Long)
 GET        /message                          controllers.MessageController.getMessage()
 GET        /products                         controllers.Products.list
 GET        /products/:ean                    controllers.Products.details(ean: Long)

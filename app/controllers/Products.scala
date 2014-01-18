@@ -3,45 +3,47 @@ package controllers
 
 import play.api.mvc.{Action, Controller}
 import models.Product
-import play.api.data.Form
-import play.api.data.Forms.{mapping, longNumber, nonEmptyText}
-import play.api.i18n.Messages
 import play.api.libs.json._
-import play.api.libs.functional._
+import play.api.Logger
+import repository.Products
+
 
 
 object Products extends Controller {
 
-  def list = Action { implicit request =>
+  def list = Action {
 
-    val products = Product.findAll
+    Logger.debug((new Products()).ddl.createStatements.mkString)
 
-    Ok(views.html.products.list(products))
+    /*implicit request =>*/
+
+      Ok(Json.prettyPrint(Json.toJson(Product.findAll)))
   }
 
 
+  def details(ean: Long) = Action {
+    implicit request =>
 
-  def details(ean: Long) = Action { implicit request =>
-
-    Product.findByEan(ean).map { product =>
-      Ok(views.html.products.details(product))
-    }.getOrElse(NotFound)
+      Product.findByEan(ean).map {
+        product =>
+          Ok(views.html.products.details(product))
+      }.getOrElse(NotFound)
 
   }
 
 
-  def search(id: Long) = Action {  implicit request =>
-    Ok(Json.prettyPrint(Json.toJson(Product.findByEan(id))))
+  def search(id: Long) = Action {
+    implicit request =>
+      Ok(Json.prettyPrint(Json.toJson(Product.findByEan(id))))
   }
 
 
-  private val productForm: Form[Product] = Form(
-    mapping(
-      "ean" -> longNumber.verifying(
-        "validation.ean.duplicate", Product.findByEan(_).isEmpty),
-      "name" -> nonEmptyText,
-      "description" -> nonEmptyText
-    )(Product.apply)(Product.unapply)
-  )
+  def edit(ean: Long) = Action {
+    NotImplemented
+  }
+
+  def update(ean: Long) = Action {
+    NotImplemented
+  }
 
 }

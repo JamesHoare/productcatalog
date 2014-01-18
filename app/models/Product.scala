@@ -1,37 +1,36 @@
 package models
 
+import _root_.repository.Products
 import play.api.libs.json._
-import play.api.libs.json.JsObject
-import play.api.libs.json.JsNumber
+import play.api.Play.current
+import play.api.db.slick.Config.driver.simple._
+import play.api.db.slick.DB
+import scala.slick.session.Session
 
 
-case class Product(
-                    ean: Long, name: String, description: String)
-
-
-
+case class Product(id: Option[Long], ean: Long, name: String, description: String)
 
 
 object Product {
 
-  var products = Set(
+  val table = new Products
 
-    Product(5010255079763L, "Paperclips Large",
-      "Large Plain Pack of 1000"),
-    Product(5018206244666L, "Giant Paperclips",
-      "Giant Plain 51mm 100 pack"),
-    Product(5018306332812L, "Paperclip Giant Plain",
-      "Giant Plain Pack of 10000"),
-    Product(5018306312913L, "No Tear Paper Clip",
-      "No Tear Extra Large Pack of 1000"),
-    Product(5018206244611L, "Zebra Paperclips",
-      "Zebra Length 28mm Assorted 150 Pack")
+  /**
+   * Returns the product with the given EAN code.
+   */
+  def findByEan(ean: Long): Option[Product] = DB.withSession {
+    implicit session: Session =>
+      Query(table).filter(_.ean === ean).list.headOption
+  }
 
-  )
-  def findAll = products.toList.sortBy(_.ean)
 
-  def findByEan(ean: Long) = products.find(_.ean == ean)
-
+  /**
+   * Returns all products sorted by EAN code.
+   */
+  def findAll: List[Product] = DB.withSession {
+    implicit session =>
+      Query(table).sortBy(_.ean).list
+  }
 
   implicit val productWrites = new Writes[Product] {
     def writes(p: Product): JsValue = {
@@ -43,5 +42,6 @@ object Product {
     }
   }
 
-
 }
+
+

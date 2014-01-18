@@ -47,9 +47,9 @@ object Products extends Controller {
   }
 
 
-  def search(id: Long) = Action {
+  def search(ean: Long) = Action {
     implicit request =>
-      Ok(Json.prettyPrint(Json.toJson(Product.findByEan(id))))
+      Ok(Json.prettyPrint(Json.toJson(Product.findByEan(ean))))
   }
 
 

@@ -13,9 +13,9 @@ object Products extends Controller {
 
   def list = Action {
 
-    Logger.debug((new Products()).ddl.createStatements.mkString)
+    //Logger.debug((new Products()).ddl.createStatements.mkString)
 
-    /*implicit request =>*/
+    implicit request =>
 
       Ok(Json.prettyPrint(Json.toJson(Product.findAll)))
   }

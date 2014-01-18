@@ -6,9 +6,13 @@ import play.api.Play.current
 import play.api.db.slick.Config.driver.simple._
 import play.api.db.slick.DB
 import scala.slick.session.Session
+import play.Logger
+import play.api.libs.json.Reads._
+import play.api.libs.functional.syntax._
+import play.api.data.validation.ValidationError
 
 
-case class Product(id: Option[Long], ean: Long, name: String, description: String)
+case class Product(ean: Long, name: String, description: String)
 
 
 object Product {
@@ -32,15 +36,30 @@ object Product {
       Query(table).sortBy(_.ean).list
   }
 
-  implicit val productWrites = new Writes[Product] {
-    def writes(p: Product): JsValue = {
-      Json.obj(
-        "ean" -> p.ean,
-        "name" -> p.name,
-        "description" -> p.description
-      )
-    }
+  def save(product: Product) {
+    Logger.info("Product saved: " + product.name)
   }
+
+
+  implicit object ProductWrites extends Writes[Product] {
+    def writes(p: Product) = Json.obj(
+      "ean" -> Json.toJson(p.ean),
+      "name" -> Json.toJson(p.name),
+      "description" -> Json.toJson(p.description)
+    )
+  }
+
+  /**
+   * Parses a JSON object
+   */
+  implicit val productReads: Reads[Product] = (
+    (JsPath \ "ean").read[Long] and
+      (JsPath \ "name").read[String] and
+      (JsPath \ "description").read[String]
+    )(Product.apply _)
+
+
+
 
 }
 

@@ -14,17 +14,7 @@ class Products extends Table[Product]("products") {
   def name = column[String]("name")
   def description = column[String]("description")
 
-  def * = id.? ~ ean ~ name ~ description <> (mapRow _, unMapRow _)
-
-  private def mapRow(id: Option[Long], ean: Long, name: String, description: String): Product = {
-    Product(id, ean, name,description)
-  }
-
-  private def unMapRow(product: Product) = {
-    val tuple = (product.id, product.ean, product.name, product.description)
-    Some(tuple)
-  }
-
+  def * = ean ~ name ~ description <> (Product.apply _, Product.unapply _)
 
 
 

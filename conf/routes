@@ -8,6 +8,7 @@ GET        /message                          controllers.MessageController.getMe
 GET        /products                         controllers.Products.list
 GET        /products/:ean                    controllers.Products.details(ean: Long)
 GET        /assets/javascripts/routes        controllers.MessageController.javascriptRoutes()
+PUT        /products/:id                    controllers.Products.save(id: Long)
 
 # Map static resources from the /public folder to the /assets URL path
 GET        /assets/*file                     controllers.Assets.at(path="/public", file)

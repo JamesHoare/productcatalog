@@ -3,11 +3,12 @@
 # ~~~~
 
 GET        /                                 controllers.MessageController.index()
-GET        /product/:ean                      controllers.Products.search(ean: Long)
+PUT        /products/:ean                    controllers.Products.save(ean: Long)
+GET        /products/:ean                    controllers.Products.search(ean: Long)
 GET        /message                          controllers.MessageController.getMessage()
 GET        /products                         controllers.Products.list
 GET        /products/:ean                    controllers.Products.details(ean: Long)
-PUT        /products/:ean                    controllers.Products.save(ean: Long)
+
 GET        /assets/javascripts/routes        controllers.MessageController.javascriptRoutes()
 
 

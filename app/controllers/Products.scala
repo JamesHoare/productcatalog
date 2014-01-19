@@ -5,7 +5,6 @@ import play.api.mvc.{Action, Controller}
 import models.Product
 import play.api.libs.json._
 import play.api.data.validation.ValidationError
-import play.api.libs.json.Reads._
 import play.api.libs.functional.syntax._
 
 
@@ -13,8 +12,6 @@ import play.api.libs.functional.syntax._
 object Products extends Controller {
 
   def list = Action {
-
-    //Logger.debug((new Products()).ddl.createStatements.mkString)
 
     implicit request =>
 
@@ -32,12 +29,12 @@ object Products extends Controller {
 
   }
 
-  def save = Action(parse.json) { implicit request =>
+  def save(ean: Long) = Action(parse.json) { implicit request =>
     val json = request.body
     json.validate[Product].fold(
       valid = { product =>
         Product.save(product)
-        Ok("Saved")
+        Ok(Json.toJson("Saved"))
       },
       invalid = {
         errors => BadRequest(Json.toJson(errors))

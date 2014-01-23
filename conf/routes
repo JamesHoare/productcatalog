@@ -9,6 +9,8 @@ GET        /message                          controllers.MessageController.getMe
 GET        /products                         controllers.Products.list
 GET        /products/:ean                    controllers.Products.details(ean: Long)
 
+GET		   /twittercache		             controllers.Products.cached
+
 GET        /assets/javascripts/routes        controllers.MessageController.javascriptRoutes()
 
 

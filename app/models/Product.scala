@@ -54,8 +54,8 @@ object Product {
    */
   implicit val productReads: Reads[Product] = (
     (JsPath \ "ean").read[Long] and
-      (JsPath \ "name").read[String] and
-      (JsPath \ "description").read[String]
+      (JsPath \ "name").read[String](minLength[String](10)) and
+      (JsPath \ "description").read[String](minLength[String](10))
     )(Product.apply _)
 
 

@@ -1,23 +1,20 @@
 package controllers
 
-import models.{Product}
+import models.Product
 import play.api.libs.json._
 import play.api.data.validation.ValidationError
 import play.api.libs.functional.syntax._
-import play.api.libs.ws.WS
-import play.Logger
 import play.api.cache.Cache
 import play.api.libs.concurrent.Execution.Implicits.defaultContext
 import play.api.mvc._
 import play.api.Play.current
-import scala.concurrent.Await
 import java.net.URLEncoder
 import play.api.libs.ws.WS
 import akka.util.Timeout
-import scala.concurrent.ExecutionContext.Implicits.global
-import scala.concurrent.{Await, Future}
+import scala.concurrent.Await
 import scala.concurrent.duration._
 import scala.Option
+import actioncomposers._
 
 
 object Products extends Controller {
@@ -114,20 +111,21 @@ object Products extends Controller {
    *
    * @return json of resource from PS API
    */
-  def getProduct(resourceType: String, region: String) = Action.async {
-    implicit val timeout = Timeout(50000 milliseconds)
+  def getProduct(resourceType: String, region: String) = TimeElapsed {
+    Logging {
+      Action.async {
+        implicit val timeout = Timeout(50000 milliseconds)
 
-    Cache.getOrElse("products", 10) {
+        Cache.getOrElse("products", 10) {
 
-      WS.url("http://products.api.net-a-porter.com/" + resourceType + "?").withQueryString("channelId" -> region).get().map {
-        response =>
-          Ok(Json.prettyPrint(response.json))
+          WS.url("http://products.api.net-a-porter.com/" + resourceType + "?").withQueryString("channelId" -> region).get().map {
+            response =>
+              Ok(Json.prettyPrint(response.json))
+          }
+        }
       }
     }
   }
-
-
-
 
 
   implicit val JsPathWrites = Writes[JsPath](p => JsString(p.toString))
@@ -142,3 +140,6 @@ object Products extends Controller {
     )
 
 }
+
+
+

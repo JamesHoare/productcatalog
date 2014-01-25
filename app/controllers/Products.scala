@@ -19,6 +19,7 @@ import actioncomposers._
 
 object Products extends Controller {
 
+
   def list = Action {
 
     implicit request =>

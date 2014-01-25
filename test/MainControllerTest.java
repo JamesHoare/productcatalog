@@ -36,11 +36,11 @@ public class MainControllerTest {
     public void indexShouldContainTheCorrectString() {
         running(fakeApplication(), new Runnable() {
             public void run() {
-                Result result = callAction(routes.ref.MainController.index());
+                Result result = callAction(routes.ref.Products);
                 assertThat(status(result)).isEqualTo(OK);
-                assertThat(contentType(result)).isEqualTo("text/html");
+                assertThat(contentType(result)).isEqualTo("application/json");
                 assertThat(charset(result)).isEqualTo("utf-8");
-                assertThat(contentAsString(result)).contains("Hello from Java");
+                //assertThat(contentAsString(result)).contains("Hello from Java");
             }
         });
     }

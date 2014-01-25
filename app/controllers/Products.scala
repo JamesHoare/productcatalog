@@ -107,18 +107,18 @@ object Products extends Controller {
    * Calls NAP product service API
    *
    * @param resourceType
-   * @param region
+   * @param channelId
    *
    * @return json of resource from PS API
    */
-  def getProduct(resourceType: String, region: String) = TimeElapsed {
+  def getProduct(resourceType: String, channelId: String) = TimeElapsed {
     Logging {
       Action.async {
         implicit val timeout = Timeout(50000 milliseconds)
 
         Cache.getOrElse("products", 10) {
 
-          WS.url("http://products.api.net-a-porter.com/" + resourceType + "?").withQueryString("channelId" -> region).get().map {
+          WS.url("http://products.api.net-a-porter.com/" + resourceType + "?").withQueryString("channelId" -> channelId).get().map {
             response =>
               Ok(Json.prettyPrint(response.json))
           }

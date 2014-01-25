@@ -8,7 +8,7 @@ GET        /products/:ean                       controllers.Products.search(ean:
 GET        /message                             controllers.MessageController.getMessage()
 GET        /products                            controllers.Products.list
 GET        /products/:ean                       controllers.Products.details(ean: Long)
-GET        /productservice/:resourceType        controllers.Products.getProduct(resourceType: String, region: String ?= "5")
+GET        /productservice/:resourceType        controllers.Products.getProduct(resourceType: String, channelId: String)
 
 
 

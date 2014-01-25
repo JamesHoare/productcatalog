@@ -37,7 +37,9 @@ object Product {
   }
 
   def save(product: Product) {
-    Logger.info("Product saved: " + product.name)
+    implicit session: Session =>
+      table.insert(product)
+      Logger.info("Product saved: " + product.name)
   }
 
 
@@ -57,8 +59,6 @@ object Product {
       (JsPath \ "name").read[String](minLength[String](10)) and
       (JsPath \ "description").read[String](minLength[String](10))
     )(Product.apply _)
-
-
 
 
 }

@@ -10,7 +10,13 @@ import play.api.cache.Cache
 import play.api.libs.concurrent.Execution.Implicits.defaultContext
 import play.api.mvc._
 import play.api.Play.current
-
+import scala.concurrent.Await
+import java.net.URLEncoder
+import play.api.libs.ws.WS
+import akka.util.Timeout
+import scala.concurrent.ExecutionContext.Implicits.global
+import scala.concurrent.{Await, Future}
+import scala.concurrent.duration._
 
 
 object Products extends Controller {
@@ -67,9 +73,39 @@ object Products extends Controller {
     NotImplemented
   }
 
+  /**
+   *
+   * Invoked on Application start
+   *
+   * @param address
+   * @return
+   */
+  def fetchLatitudeAndLongitude(address: String): Option[(Double, Double)] = {
+    implicit val timeout = Timeout(50000 milliseconds)
+
+    // Encoded the address in order to remove the spaces from the address (spaces will be replaced by '+')
+    //@purpose There should be no spaces in the parameter values for a GET request
+    val addressEncoded = URLEncoder.encode(address, "UTF-8");
+    val jsonContainingLatitudeAndLongitude = WS.url("http://maps.googleapis.com/maps/api/geocode/json?address=" + addressEncoded + "&sensor=true").get()
+
+    val future = jsonContainingLatitudeAndLongitude map {
+      response => (response.json \\ "location")
+    }
+
+    // Wait until the future completes (Specified the timeout above)
+
+    val result = Await.result(future, timeout.duration).asInstanceOf[List[play.api.libs.json.JsObject]]
+
+    //Fetch the values for Latitude & Longitude from the result of future
+    val latitude = (result(0) \\ "lat")(0).toString.toDouble
+    val longitude = (result(0) \\ "lng")(0).toString.toDouble
+    Option(latitude, longitude)
+  }
+
+
   def cached() = Action.async {
 
-    implicit val context = scala.concurrent.ExecutionContext.Implicits.global
+
 
     val results = 3
     val query = "paperclip OR \"paper clip\""
@@ -80,20 +116,21 @@ object Products extends Controller {
 
       Logger.info("Requesting tweets from Twitter")
 
-     /* responsePromise.map {
-        response =>
-          val tweets = Json.parse(response.body).as[Seq[Tweet]]
-          Ok(Json.toJson(tweets))
-      }*/
+      /* responsePromise.map {
+         response =>
+           val tweets = Json.parse(response.body).as[Seq[Tweet]]
+           Ok(Json.toJson(tweets))
+       }*/
 
       WS.url("http://search.twitter.com/search.json")
-        .withQueryString("q" -> query, "rpp" -> results.toString).get().map { response =>
-        Ok("Feed title: " + (response.json \ "title").as[String])
+        .withQueryString("q" -> query, "rpp" -> results.toString).get().map {
+        response =>
+          Ok("Feed title: " + (response.json \ "title").as[String])
       }
 
-     /* val futureResult: Future[JsResult[Person]] = WS.url(url).get().map {
-        response => (response.json \ "person").validate[Person]
-      }*/
+      /* val futureResult: Future[JsResult[Person]] = WS.url(url).get().map {
+         response => (response.json \ "person").validate[Person]
+       }*/
 
     }
   }

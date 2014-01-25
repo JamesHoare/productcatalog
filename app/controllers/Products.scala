@@ -86,7 +86,7 @@ object Products extends Controller {
     // Encoded the address in order to remove the spaces from the address (spaces will be replaced by '+')
     //@purpose There should be no spaces in the parameter values for a GET request
     val addressEncoded = URLEncoder.encode(address, "UTF-8");
-
+    //cache the response
     Cache.getOrElse("geocode", 10) {
 
       val jsonContainingLatitudeAndLongitude = WS.url("http://maps.googleapis.com/maps/api/geocode/json?address=" + addressEncoded + "&sensor=true").get().map {

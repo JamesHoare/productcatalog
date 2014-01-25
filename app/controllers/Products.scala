@@ -23,9 +23,6 @@ object Products extends Controller {
 
     implicit request =>
 
-
-
-
       Ok(Json.toJson(Product.findAll))
   }
 

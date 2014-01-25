@@ -25,6 +25,7 @@ object Global extends GlobalSettings {
  * Global Filter which has full access to request
  */
 
+
 import play.api.Logger
 import play.api.mvc._
 import play.api.libs.concurrent.Execution.Implicits.defaultContext
@@ -32,8 +33,8 @@ import play.api.libs.concurrent.Execution.Implicits.defaultContext
 object LoggingFilter extends EssentialFilter {
   def apply(nextFilter: EssentialAction) = new EssentialAction {
     def apply(requestHeader: RequestHeader) = {
-      val action = requestHeader.tags(Routes.ROUTE_CONTROLLER) +
-        "." + requestHeader.tags(Routes.ROUTE_ACTION_METHOD)
+      /*val action = requestHeader.tags(Routes.ROUTE_CONTROLLER) +
+        "." + requestHeader.tags(Routes.ROUTE_ACTION_METHOD)*/
       val startTime = System.currentTimeMillis
       nextFilter(requestHeader).map {
         result =>

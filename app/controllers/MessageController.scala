@@ -18,8 +18,9 @@ object MessageController extends Controller {
     Ok(Json.toJson(Message("Hello Jess from  Scala")))
   }
 
-  def javascriptRoutes = Action { implicit request =>
-    Ok(Routes.javascriptRouter("jsRoutes")(routes.javascript.MessageController.getMessage)).as(JAVASCRIPT)
+  def javascriptRoutes = Action {
+    implicit request =>
+      Ok(Routes.javascriptRouter("jsRoutes")(routes.javascript.MessageController.getMessage)).as(JAVASCRIPT)
   }
 
 }

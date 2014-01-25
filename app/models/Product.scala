@@ -36,10 +36,14 @@ object Product {
       Query(table).sortBy(_.ean).list
   }
 
-  def save(product: Product) {
+  /**
+   *
+   * @param product
+   * @return primary key after successful insert
+   */
+  def save(product: Product): Long = DB.withSession {
     implicit session: Session =>
-      table.insert(product)
-      Logger.info("Product saved: " + product.name)
+      table.forInsert.insert(product)
   }
 
 

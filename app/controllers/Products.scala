@@ -1,6 +1,6 @@
 package controllers
 
-import models.{Tweet, Product}
+import models.{Product}
 import play.api.libs.json._
 import play.api.data.validation.ValidationError
 import play.api.libs.functional.syntax._
@@ -17,6 +17,7 @@ import akka.util.Timeout
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.{Await, Future}
 import scala.concurrent.duration._
+import scala.Option
 
 
 object Products extends Controller {
@@ -104,37 +105,29 @@ object Products extends Controller {
     }
   }
 
+  /**
+   *
+   * Calls NAP product service API
+   *
+   * @param resourceType
+   * @param region
+   * @param params
+   * @return json of resource from PS API
+   */
+  def getProduct(resourceType: String, region: String, params: String) = Action.async {
+    implicit val timeout = Timeout(50000 milliseconds)
 
-  def cached() = Action.async {
+    Cache.getOrElse("products", 10) {
 
-
-    val results = 3
-    val query = "paperclip OR \"paper clip\""
-
-    Cache.getOrElse("tweets", 10) {
-      /*val responsePromise = WS.url("http://search.twitter.com/search.json")
-        .withQueryString("q" -> query, "rpp" -> results.toString).get*/
-
-      Logger.info("Requesting tweets from Twitter")
-
-      /* responsePromise.map {
-         response =>
-           val tweets = Json.parse(response.body).as[Seq[Tweet]]
-           Ok(Json.toJson(tweets))
-       }*/
-
-      WS.url("http://search.twitter.com/search.json")
-        .withQueryString("q" -> query, "rpp" -> results.toString).get().map {
+      WS.url("http://products.api.net-a-porter.com/" + resourceType + "?").withQueryString("channelId" -> region, "name" -> params).get().map {
         response =>
-          Ok("Feed title: " + (response.json \ "title").as[String])
+          Ok(Json.prettyPrint(response.json))
       }
-
-      /* val futureResult: Future[JsResult[Person]] = WS.url(url).get().map {
-         response => (response.json \ "person").validate[Person]
-       }*/
-
     }
   }
+
+
+
 
 
   implicit val JsPathWrites = Writes[JsPath](p => JsString(p.toString))

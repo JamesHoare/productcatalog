@@ -2,18 +2,19 @@
 # This file defines all application routes (Higher priority routes first)
 # ~~~~
 
-GET        /                                 controllers.MessageController.index()
-PUT        /products/:ean                    controllers.Products.save(ean: Long)
-GET        /products/:ean                    controllers.Products.search(ean: Long)
-GET        /message                          controllers.MessageController.getMessage()
-GET        /products                         controllers.Products.list
-GET        /products/:ean                    controllers.Products.details(ean: Long)
+GET        /                                                    controllers.MessageController.index()
+PUT        /products/:ean                                       controllers.Products.save(ean: Long)
+GET        /products/:ean                                       controllers.Products.search(ean: Long)
+GET        /message                                             controllers.MessageController.getMessage()
+GET        /products                                            controllers.Products.list
+GET        /products/:ean                                       controllers.Products.details(ean: Long)
+GET        /productservice/:resourceType/:region/:params        controllers.Products.getProduct(resourceType: String, region : String, params : String)
 
-GET		   /twittercache		             controllers.Products.cached
 
-GET        /assets/javascripts/routes        controllers.MessageController.javascriptRoutes()
+
+GET        /assets/javascripts/routes                           controllers.MessageController.javascriptRoutes()
 
 
 # Map static resources from the /public folder to the /assets URL path
-GET        /assets/*file                     controllers.Assets.at(path="/public", file)
-GET        /webjars/*file                    controllers.WebJarAssets.at(file)
+GET        /assets/*file                                        controllers.Assets.at(path="/public", file)
+GET        /webjars/*file                                       controllers.WebJarAssets.at(file)

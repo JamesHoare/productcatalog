@@ -14,6 +14,8 @@ class Products extends Table[Product]("products") {
   def name = column[String]("name")
   def description = column[String]("description")
 
+  def forInsert = * returning id
+
   def * = ean ~ name ~ description <> (Product.apply _, Product.unapply _)
 
 

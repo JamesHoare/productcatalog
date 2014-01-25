@@ -1,4 +1,4 @@
-import _root_.controllers.Products
+
 import play.api._
 import play.api.mvc._
 
@@ -12,9 +12,8 @@ object Global extends GlobalSettings {
 
 
   override def onStart(app: Application) {
-    Logger.info("Invoking Google Geo Code")
-    val valuesFetchedForLatitudeAndLongitude = Products.fetchLatitudeAndLongitude("London")
-    println(valuesFetchedForLatitudeAndLongitude)
+     //do something interesting
+
   }
 
 }

@@ -111,15 +111,15 @@ object Products extends Controller {
    *
    * @param resourceType
    * @param region
-   * @param params
+   *
    * @return json of resource from PS API
    */
-  def getProduct(resourceType: String, region: String, params: String) = Action.async {
+  def getProduct(resourceType: String, region: String) = Action.async {
     implicit val timeout = Timeout(50000 milliseconds)
 
     Cache.getOrElse("products", 10) {
 
-      WS.url("http://products.api.net-a-porter.com/" + resourceType + "?").withQueryString("channelId" -> region, "name" -> params).get().map {
+      WS.url("http://products.api.net-a-porter.com/" + resourceType + "?").withQueryString("channelId" -> region).get().map {
         response =>
           Ok(Json.prettyPrint(response.json))
       }

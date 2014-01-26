@@ -21,6 +21,10 @@ import actioncomposers._
  * In Play, each controller is a Scala object that defines one or more actions.
  * Play uses an object instead of a class because the controller doesn’t have any state;
  * this controller is used to group product actions.
+ *
+ *
+ * DON’T DEFINE A var IN A CONTROLLER OBJECT
+ *
  */
 trait Products  {
   this: Controller =>

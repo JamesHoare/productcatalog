@@ -6,6 +6,7 @@ import play.api.data.validation.ValidationError
 import play.api.libs.functional.syntax._
 import play.api.cache.Cache
 import play.api.libs.concurrent.Execution.Implicits.defaultContext
+
 import play.api.mvc._
 import play.api.Play.current
 import java.net.URLEncoder
@@ -16,8 +17,13 @@ import scala.concurrent.duration._
 import scala.Option
 import actioncomposers._
 
-
-object Products extends Controller {
+/**
+ * In Play, each controller is a Scala object that defines one or more actions.
+ * Play uses an object instead of a class because the controller doesn’t have any state;
+ * this controller is used to group product actions.
+ */
+trait Products  {
+  this: Controller =>
 
 
   def list = Action {
@@ -138,6 +144,10 @@ object Products extends Controller {
     )
 
 }
+
+
+object Products extends Controller with Products
+
 
 
 

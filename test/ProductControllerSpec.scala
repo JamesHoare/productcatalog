@@ -1,22 +1,21 @@
+package test
+
+import controllers.Products
+import play.api.test.{FakeRequest, PlaySpecification}
+import play.mvc.{SimpleResult, Controller, Results}
+import scala.concurrent.Future
 
 
-import org.specs2.mutable.script.Specification
-import play.api.test._
-import play.api.test.Helpers._
+object ProductControllerSpec extends PlaySpecification with Results {
 
-import controllers._
+  object Products extends Controller with Products
 
-class EssentialActionSpec extends Specification {
-
-  "EssentialActions" should {
-
-    "refuse request without a token" in new WithApplication {
-      val request = FakeRequest(GET, "/...")
-      // Must call `run` on an Iteratee to obtain the Future[SimpleResult]
-      val response = Products(request).run
-      status(of = response) must equalTo (UNAUTHORIZED)
+  "Example Page#index" should {
+    "should be valid" in {
+      val controller = new Products()
+      val result: Future[SimpleResult] = controller.getProduct("","").apply(FakeRequest())
+      val bodyText: String = contentAsString(result)
+      bodyText must be equalTo "ok"
     }
-
-
   }
 }

@@ -1,6 +1,9 @@
 
+import com.typesafe.config.ConfigFactory
+import java.io.File
 import play.api._
 import play.api.mvc._
+
 
 // Note: this is in the default package.
 object Global extends GlobalSettings {
@@ -19,6 +22,31 @@ object Global extends GlobalSettings {
   override def doFilter(next: EssentialAction): EssentialAction = {
     Filters(super.doFilter(next), LoggingFilter)
   }
+
+  /**
+   *
+   * Get a file within the .playapp folder in the user's home directory
+   *
+   * This just adds it to the application’s config, overriding the default values. If the config file doesn’t exist,
+   * it adds an empty config. Since Play’s Configuration wraps the Typesafe Config library,
+   * we use ConfigFactory to load the config, then wrap that in a Configuration.
+   *
+   * You can now read the new config values as usual in your application code:
+   *
+   * def coolFeatureEnabled = current.configuration.getBoolean("coolFeatureEnabled").getOrElse(false)
+   *
+   * @param filename
+   * @return
+   */
+  def getUserFile(filename: String): File =
+    new File(Seq(System.getProperty("user.home"), ".playapp", filename).mkString(File.separator))
+
+  override def onLoadConfig(config: Configuration, path: File, classloader: ClassLoader, mode: Mode.Mode) = {
+    val localConfig = Configuration(ConfigFactory.parseFile(getUserFile("local.conf")))
+    super.onLoadConfig(config ++ localConfig, path, classloader, mode)
+  }
+
+
 }
 
 /**

@@ -12,7 +12,7 @@ import play.api.Play.current
 import java.net.URLEncoder
 import play.api.libs.ws.WS
 import akka.util.Timeout
-import scala.concurrent.Await
+import scala.concurrent.{TimeoutException, Await}
 import scala.concurrent.duration._
 import scala.Option
 import actioncomposers._
@@ -26,7 +26,7 @@ import actioncomposers._
  * DON’T DEFINE A var IN A CONTROLLER OBJECT
  *
  */
-trait Products  {
+trait Products {
   this: Controller =>
 
 
@@ -126,10 +126,16 @@ trait Products  {
 
         Cache.getOrElse("products", 10) {
 
-          WS.url("http://products.api.net-a-porter.com/" + resourceType + "?").withQueryString("channelId" -> channelId).get().map {
+          WS.url("http://products.api.net-a-porter.co/" + resourceType + "?").withQueryString("channelId" -> channelId).get().map {
             response =>
               Ok(Json.prettyPrint(response.json))
+          }.recover {
+            case e: Exception =>
+              Ok(Json.prettyPrint(Json.toJson(Map("error" -> Seq(e.getMessage))))
+            )
           }
+
+
         }
       }
     }

@@ -11,11 +11,11 @@ class ProductsActor extends Actor with ActorLogging {
 
 
   def receive = {
-    case FetchProducts =>
-      val futureResponse = WS.url("http://products.api.net-a-porter.com/" + FetchProducts.resourceType + "?").withQueryString("channelId" -> FetchProducts.channelId).get()
-        sender ! futureResponse
+    case FetchProducts(resourceType, channelId) =>
+      val futureResponse = WS.url("http://products.api.net-a-porter.com/" + resourceType + "?").withQueryString("channelId" -> channelId).get()
+      sender ! futureResponse
 
-      //log.debug("body****" + response)
+    //log.debug("body****" + response)
 
 
   }

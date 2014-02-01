@@ -1,8 +1,10 @@
 
+import akka.actor.Props
 import com.typesafe.config.ConfigFactory
 import java.io.File
 import play.api._
 import play.api.mvc._
+import play.libs.Akka
 
 
 // Note: this is in the default package.
@@ -15,6 +17,7 @@ object Global extends GlobalSettings {
 
 
   override def onStart(app: Application) {
+    //val myActor = Akka.system.actorOf(Props[MyActor], name = "myactor")
     //do something interesting
 
   }

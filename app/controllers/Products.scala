@@ -16,6 +16,11 @@ import scala.concurrent.{TimeoutException, Await}
 import scala.concurrent.duration._
 import scala.Option
 import actioncomposers._
+import play.api.libs.concurrent.Akka
+import Actors.ProductsActor
+import akka.actor.Props
+import akka.pattern.ask
+
 
 /**
  * In Play, each controller is a Scala object that defines one or more actions.
@@ -26,8 +31,10 @@ import actioncomposers._
  * DON’T DEFINE A var IN A CONTROLLER OBJECT
  *
  */
-trait Products {
-  this: Controller =>
+object Products extends Controller {
+
+
+  case class FetchProducts(resourceType: String, channelId: String)
 
 
   def list = Action {
@@ -126,17 +133,36 @@ trait Products {
 
         Cache.getOrElse("products", 10) {
 
-          WS.url("http://products.api.net-a-porter.co/" + resourceType + "?").withQueryString("channelId" -> channelId).get().map {
+          WS.url("http://products.api.net-a-porter.com/" + resourceType + "?").withQueryString("channelId" -> channelId).get().map {
             response =>
               Ok(Json.prettyPrint(response.json))
           }.recover {
             case e: Exception =>
               Ok(Json.prettyPrint(Json.toJson(Map("error" -> Seq(e.getMessage))))
-            )
+
+
+              )
           }
 
 
         }
+
+        val myActor = Akka.system.actorOf(Props[ProductsActor], name = "productactor")
+        (myActor ? FetchProducts(resourceType, channelId)).map {
+          response =>
+            Ok(Json.prettyPrint(response))
+        }
+
+        /*  val responseFuture = WS.url("http://products.api.net-a-porter.co/" + resourceType + "?").withQueryString("channelId" -> channelId).get()
+
+          val resultFuture = responseFuture map { response =>
+            response.status match {
+              case 200 => Some(response.json)
+              case _ => None
+            }
+          }*/
+
+
       }
     }
   }
@@ -156,7 +182,7 @@ trait Products {
 }
 
 
-object Products extends Controller with Products
+
 
 
 

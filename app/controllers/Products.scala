@@ -10,7 +10,7 @@ import play.api.libs.concurrent.Execution.Implicits.defaultContext
 import play.api.mvc._
 import play.api.Play.current
 import java.net.URLEncoder
-import play.api.libs.ws.WS
+import play.api.libs.ws.{Response, WS}
 import akka.util.Timeout
 import scala.concurrent.{TimeoutException, Await}
 import scala.concurrent.duration._
@@ -131,39 +131,38 @@ object Products extends Controller {
       Action.async {
         implicit val timeout = Timeout(50000 milliseconds)
 
-        Cache.getOrElse("products", 10) {
+        /* Cache.getOrElse("products", 10) {
 
-          WS.url("http://products.api.net-a-porter.com/" + resourceType + "?").withQueryString("channelId" -> channelId).get().map {
-            response =>
-              Ok(Json.prettyPrint(response.json))
-          }.recover {
-            case e: Exception =>
-              Ok(Json.prettyPrint(Json.toJson(Map("error" -> Seq(e.getMessage))))
-
-
-              )
-          }
+           WS.url("http://products.api.net-a-porter.com/" + resourceType + "?").withQueryString("channelId" -> channelId).get().map {
+             response =>
+               Ok(Json.prettyPrint(response.json))
+           }.recover {
+             case e: Exception =>
+               Ok(Json.prettyPrint(Json.toJson(Map("error" -> Seq(e.getMessage))))
 
 
-        }
+               )
+           }
+
+
+         }*/
 
         val myActor = Akka.system.actorOf(Props[ProductsActor], name = "productactor")
-        (myActor ? FetchProducts(resourceType, channelId)).map {
+        (myActor ? FetchProducts(resourceType, channelId)).mapTo[Response].map(
           response =>
-            Ok(Json.prettyPrint(response))
-        }
-
-        /*  val responseFuture = WS.url("http://products.api.net-a-porter.co/" + resourceType + "?").withQueryString("channelId" -> channelId).get()
-
-          val resultFuture = responseFuture map { response =>
-            response.status match {
-              case 200 => Some(response.json)
-              case _ => None
-            }
-          }*/
-
-
+            Ok(Json.prettyPrint(response.json)))
       }
+
+      /*  val responseFuture = WS.url("http://products.api.net-a-porter.co/" + resourceType + "?").withQueryString("channelId" -> channelId).get()
+
+        val resultFuture = responseFuture map { response =>
+          response.status match {
+            case 200 => Some(response.json)
+            case _ => None
+          }
+        }*/
+
+
     }
   }
 

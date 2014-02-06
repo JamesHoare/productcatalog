@@ -12,7 +12,7 @@ import play.api.Play.current
 import java.net.URLEncoder
 import play.api.libs.ws.{Response, WS}
 import akka.util.Timeout
-import scala.concurrent.{TimeoutException, Await}
+import scala.concurrent.{Future, TimeoutException, Await}
 import scala.concurrent.duration._
 import scala.Option
 import actioncomposers._
@@ -131,7 +131,7 @@ object Products extends Controller {
       Action.async {
         implicit val timeout = Timeout(50000 milliseconds)
 
-        /* Cache.getOrElse("products", 10) {
+         Cache.getOrElse("products", 10) {
 
            WS.url("http://products.api.net-a-porter.com/" + resourceType + "?").withQueryString("channelId" -> channelId).get().map {
              response =>
@@ -145,12 +145,13 @@ object Products extends Controller {
            }
 
 
-         }*/
+         }
 
         val myActor = Akka.system.actorOf(Props[ProductsActor], name = "productactor")
         (myActor ? FetchProducts(resourceType, channelId)).mapTo[Response].map(
           response =>
-            Ok(Json.prettyPrint(response.json)))
+            Ok(Json.prettyPrint(response.json))
+        )
       }
 
       /*  val responseFuture = WS.url("http://products.api.net-a-porter.co/" + resourceType + "?").withQueryString("channelId" -> channelId).get()

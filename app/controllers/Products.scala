@@ -16,7 +16,7 @@ import scala.concurrent.{Future, TimeoutException, Await}
 import scala.concurrent.duration._
 import scala.Option
 import actioncomposers._
-import play.api.libs.concurrent.Akka
+import play.api.libs.concurrent._
 import Actors.ProductsActor
 import akka.actor.Props
 import akka.pattern.ask
@@ -147,12 +147,12 @@ object Products extends Controller {
 
          }
 
-        val myActor = Akka.system.actorOf(Props[ProductsActor], name = "productactor")
+    /*    val myActor = Akka.system.actorOf(Props[ProductsActor], name = "productactor")
         (myActor ? FetchProducts(resourceType, channelId)).mapTo[Response].map(
           response =>
             Ok(Json.prettyPrint(response.json))
         )
-      }
+      }*/
 
       /*  val responseFuture = WS.url("http://products.api.net-a-porter.co/" + resourceType + "?").withQueryString("channelId" -> channelId).get()
 

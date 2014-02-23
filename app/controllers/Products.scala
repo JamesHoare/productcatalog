@@ -77,6 +77,21 @@ object Products extends Controller {
       Ok(Json.prettyPrint(Json.toJson(Product.findByEan(ean))))
   }
 
+  //todo complete me
+  def search(searchString : String) = TimeElapsed {
+    Logging {
+      Action.async {
+        implicit val timeout = Timeout(50000 milliseconds)
+
+        WS.url("elasticsearch path/" + searchString + "?").withQueryString("channelId" -> searchString).get().map {
+          response =>
+            Ok(Json.prettyPrint(response.json))
+
+
+      }
+    }
+  }
+
 
   def edit(ean: Long) = Action {
     NotImplemented
@@ -131,39 +146,40 @@ object Products extends Controller {
       Action.async {
         implicit val timeout = Timeout(50000 milliseconds)
 
-         Cache.getOrElse("products", 10) {
+        Cache.getOrElse("products", 10) {
 
-           WS.url("http://products.api.net-a-porter.com/" + resourceType + "?").withQueryString("channelId" -> channelId).get().map {
-             response =>
-               Ok(Json.prettyPrint(response.json))
-           }.recover {
-             case e: Exception =>
-               Ok(Json.prettyPrint(Json.toJson(Map("error" -> Seq(e.getMessage))))
-
-
-               )
-           }
+          WS.url("http://products.api.net-a-porter.com/" + resourceType + "?").withQueryString("channelId" -> channelId).get().map {
+            response =>
+              Ok(Json.prettyPrint(response.json))
+          }.recover {
+            case e: Exception =>
+              Ok(Json.prettyPrint(Json.toJson(Map("error" -> Seq(e.getMessage))))
 
 
-         }
-
-    /*    val myActor = Akka.system.actorOf(Props[ProductsActor], name = "productactor")
-        (myActor ? FetchProducts(resourceType, channelId)).mapTo[Response].map(
-          response =>
-            Ok(Json.prettyPrint(response.json))
-        )
-      }*/
-
-      /*  val responseFuture = WS.url("http://products.api.net-a-porter.co/" + resourceType + "?").withQueryString("channelId" -> channelId).get()
-
-        val resultFuture = responseFuture map { response =>
-          response.status match {
-            case 200 => Some(response.json)
-            case _ => None
+              )
           }
-        }*/
 
 
+        }
+
+        /*    val myActor = Akka.system.actorOf(Props[ProductsActor], name = "productactor")
+            (myActor ? FetchProducts(resourceType, channelId)).mapTo[Response].map(
+              response =>
+                Ok(Json.prettyPrint(response.json))
+            )
+          }*/
+
+        /*  val responseFuture = WS.url("http://products.api.net-a-porter.co/" + resourceType + "?").withQueryString("channelId" -> channelId).get()
+
+          val resultFuture = responseFuture map { response =>
+            response.status match {
+              case 200 => Some(response.json)
+              case _ => None
+            }
+          }*/
+
+
+      }
     }
   }
 

@@ -1,5 +1,6 @@
 
 import akka.actor.Props
+import com.google.inject.Guice
 import com.typesafe.config.ConfigFactory
 import java.io.File
 import play.api._
@@ -9,6 +10,17 @@ import play.libs.Akka
 
 // Note: this is in the default package.
 object Global extends GlobalSettings {
+
+  private lazy val injector = {
+    Play.isProd match {
+      case true => Guice.createInjector(new ProdModule)
+      case false => Guice.createInjector(new DevModule)
+    }
+  }
+
+  override def getControllerInstance[A](clazz: Class[A]) = {
+    injector.getInstance(clazz)
+  }
 
   override def onRouteRequest(request: RequestHeader): Option[Handler] = {
     println("executed before every request:" + request.toString)

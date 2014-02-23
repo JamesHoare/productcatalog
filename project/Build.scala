@@ -13,7 +13,9 @@ object ApplicationBuild extends Build {
     "mysql" % "mysql-connector-java" % "5.1.18",
     "com.typesafe.play" %% "play-slick" % "0.5.0.8",
     "org.webjars" %% "webjars-play" % "2.2.0",
-    "org.webjars" % "bootstrap" % "2.3.1"
+    "org.webjars" % "bootstrap" % "2.3.1",
+    "com.google.inject" % "guice" % "3.0",
+    "com.tzavellas" % "sse-guice" % "0.7.1"
   )
 
 

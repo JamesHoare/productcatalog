@@ -8,7 +8,7 @@ import scala.concurrent.Future
 
 object ProductControllerSpec extends PlaySpecification with Results {
 
-  object Products extends Controller with Products
+  object Products extends Controller
 
   "Example Page#index" should {
     "should be valid" in {

@@ -2,10 +2,9 @@
 # This file defines all application routes (Higher priority routes first)
 # ~~~~
 
-GET        /                                    controllers.MessageController.index()
+
 PUT        /products/:ean                       controllers.Products.save(ean: Long)
 GET        /products/:ean                       controllers.Products.search(ean: Long)
-GET        /message                             controllers.MessageController.getMessage()
 GET        /products                            controllers.Products.list
 GET        /products/:ean                       controllers.Products.details(ean: Long)
 GET        /productservice/:resourceType        controllers.Products.getProduct(resourceType: String, channelId: String)

@@ -50,7 +50,7 @@ object Products extends Controller {
 
       Product.findByEan(ean).map {
         product =>
-          Ok(views.html.products.details(product))
+          Ok("")
       }.getOrElse(NotFound)
 
   }
@@ -78,7 +78,7 @@ object Products extends Controller {
   }
 
   //todo complete me
-  def search(searchString : String) = TimeElapsed {
+  def search(searchString: String) = TimeElapsed {
     Logging {
       Action.async {
         implicit val timeout = Timeout(50000 milliseconds)
@@ -88,6 +88,7 @@ object Products extends Controller {
             Ok(Json.prettyPrint(response.json))
 
 
+        }
       }
     }
   }
@@ -146,7 +147,8 @@ object Products extends Controller {
       Action.async {
         implicit val timeout = Timeout(50000 milliseconds)
 
-        Cache.getOrElse("products", 10) {
+        //TODO create cache key function as passing dynamic data through
+        //Cache.getOrElse("products", 10) {
 
           WS.url("http://products.api.net-a-porter.com/" + resourceType + "?").withQueryString("channelId" -> channelId).get().map {
             response =>
@@ -160,7 +162,7 @@ object Products extends Controller {
           }
 
 
-        }
+     //   }
 
         /*    val myActor = Akka.system.actorOf(Props[ProductsActor], name = "productactor")
             (myActor ? FetchProducts(resourceType, channelId)).mapTo[Response].map(
